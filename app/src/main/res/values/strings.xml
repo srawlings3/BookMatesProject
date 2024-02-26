@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BookMatesProject</string>
+    <string name="title_home">Home</string>
+    <string name="title_gamesplaying">Games</string>
+    <string name="title_leaderboard">Leaderboard</string>
+    <string name="add_player">Add Player</string>
+    <string name="add_layout">Add Template</string>
+    <string name="Leaderboard_title_start">Win Leaderboard</string>
+    <string name="first_place">"1: "</string>
+    <string name="second_place">"2: "</string>
+    <string name="third_place">"3: "</string>
+</resources>
