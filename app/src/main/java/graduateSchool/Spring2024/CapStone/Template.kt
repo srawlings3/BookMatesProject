@@ -1,6 +1,22 @@
 package graduateSchool.Spring2024.CapStone
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.PrimaryKey
+import graduateSchool.Spring2024.CapStone.databinding.FragmentGameListBinding
+import graduateSchool.Spring2024.CapStone.ui.gamelist.GameListViewModel
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 data class Template(
@@ -32,7 +48,7 @@ object TemplatesList {
             maxPlayers = 4,
             scoreType = "Rounds-Score",
             rows = 1,
-            rowTitles = listOf("Score:")
+            rowTitles = listOf("Score:", "Total")
         ))
 
         templates.add(Template(
@@ -48,6 +64,10 @@ object TemplatesList {
 
     fun getTemplates(): List<Template>{
         return templates.toList()
+    }
+
+    fun getTemplateNames(): List<String>{
+        return templates.map{template -> template.gameName}
     }
 
 

@@ -1,21 +1,28 @@
 package graduateSchool.Spring2024.CapStone
 
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import java.util.Date
 
 import java.util.UUID
 data class Game(
     @PrimaryKey val gameId: UUID = UUID.randomUUID(),
-    val title: String,
+    val templateId: UUID,
+    var title: String,
     val players: List<Player>,
-    val scores: MutableMap<Player, Int> = mutableMapOf()
+    val scores: MutableMap<Player, MutableList<Int>> = mutableMapOf(),
+    var finished: Boolean = false
 ){
-    fun updateScore(player: Player, score: Int){
+    constructor(templateID: UUID, title: String, players: List<Player>,scores: MutableMap<Player, MutableList<Int>>) : this(UUID.randomUUID(), templateID,title, players, scores)
+    fun updateScore(player: Player, score: MutableList<Int>){
         scores[player] = score
+    }
+
+    fun updateFinished(){
+        finished = !finished
+    }
+
+    fun updateTitle(text: String){
+        title = text
     }
 }
 
@@ -27,11 +34,11 @@ object Games{
     private val gamesList: MutableList<Game> = mutableListOf()
 
 
-    fun createGames(template: Template, title: String,  players: List<Player>){
-        val game = Game(template.templateId, title, players)
+    fun createGames(template: Template, title: String,  players: List<Player>, scores: MutableMap<Player, MutableList<Int>>){
+        val game = Game(template.templateId, title, players, scores)
         players.forEach{
                 player ->
-            game.updateScore(player, 0)
+            game.updateScore(player, mutableListOf(0))
         }
         gamesList.add(game)
     }
@@ -40,5 +47,23 @@ object Games{
     fun getGames(): List<Game>{
         return gamesList
     }
+
+    fun deleteGame(game: Game){
+        gamesList.remove(game)
+    }
+
+    fun getGame(id: UUID): Game? {
+
+       return gamesList.find{it.gameId == id}
+
+    }
+
+    fun addGame(game: Game): UUID{
+        gamesList.add(game)
+        return gamesList.find { it.gameId == game.gameId }?.gameId ?: game.gameId
+    }
+
+
+
 
 }

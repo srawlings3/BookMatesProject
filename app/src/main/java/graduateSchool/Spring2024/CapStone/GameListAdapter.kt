@@ -1,6 +1,7 @@
 package graduateSchool.Spring2024.CapStone
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import graduateSchool.Spring2024.CapStone.databinding.ListItemGamesBinding
@@ -13,13 +14,13 @@ class GameHolder(
     private val binding: ListItemGamesBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    lateinit var boundDream: Game
+    lateinit var boundGame: Game
         private set
 
 
     fun bind(game: Game, onGameClicked: (gameId: UUID) -> Unit) {
 
-        boundDream = game
+        boundGame = game
 
         binding.root.setOnClickListener {
             onGameClicked(game.gameId)
@@ -36,10 +37,25 @@ class GameHolder(
         //    dream.entries.count { it.kind ==  DreamEntryKind.REFLECTION}
         // )
 
-        var tempString: String = "Players: "
-        binding.listOfPlayers.text = game.players.forEach {
-            tempString += " ${it.playerName}"
-        }.toString()
+
+        val playerNames = game.players.map {it.playerName }
+        binding.listOfPlayers.text = "Players: ${playerNames.joinToString(", ") }"
+
+        with(binding.listItemImage){
+            when{
+                game.finished -> {
+                    visibility = View.VISIBLE
+                    setImageResource(R.drawable.finished_game)
+                }
+                !game.finished ->{
+                    visibility = View.GONE
+                }
+            }
+        }
+        //var tempString: String = "Players: "
+        //binding.listOfPlayers.text = game.players.forEach {
+        //    tempString += " ${it.playerName}"
+        //}.toString()
 
         /*
 
@@ -71,7 +87,7 @@ class GameHolder(
 
 
 class GameListAdapter(
-    private val games: List<Game>,
+    private var games: List<Game>,
     private val onGameClicked: (UUID) -> Unit
 ) : RecyclerView.Adapter<GameHolder>() {
 
@@ -90,10 +106,16 @@ class GameListAdapter(
         //  binding.listItemTitle.text = dream.title
         // binding.listItemReflectionCount.text = "Reflections: 0"
         //}
-        holder.bind(games[position], onGameClicked)
+        holder.bind(game, onGameClicked)
     }
 
     override fun getItemCount() :Int {
         return games.size
+    }
+
+    fun updateGames(gameList: List<Game>){
+        games = gameList
+        notifyDataSetChanged()
+
     }
 }

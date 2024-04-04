@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -52,15 +54,21 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId){
             R.id.add_player ->{
-                //Fill in later
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.action_newPlayerFragment)
                 true
             }
             R.id.add_template->{
-                //fill later
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.action_newTemplateFragment)
+                true
+            }
+            R.id.add_game->{
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.action_NewGameFragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+
 
 }

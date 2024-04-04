@@ -9,4 +9,6 @@
     <string name="first_place">"1: "</string>
     <string name="second_place">"2: "</string>
     <string name="third_place">"3: "</string>
+    <string name="game_title">Game</string>
+    <string name="last_updated_text">Last Updated: dd-mm-yyyy</string>
 </resources>

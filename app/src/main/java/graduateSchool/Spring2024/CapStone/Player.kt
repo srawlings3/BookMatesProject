@@ -1,7 +1,9 @@
 package graduateSchool.Spring2024.CapStone
 
+import java.util.UUID
+
 data class Player(
-    val playerId: Int,
+    val playerId: UUID,
     val playerName: String,
     val wins: Int,
     val gamesPlayed: Int,
@@ -20,7 +22,7 @@ object PlayerList {
 
     init{
         players.add(Player(
-            1,
+            UUID.randomUUID(),
             "Stephen",
             0,
             0,
@@ -28,7 +30,7 @@ object PlayerList {
             ))
 
         players.add(Player(
-            2,
+            UUID.randomUUID(),
             "Trent",
             0,
             0,
@@ -36,7 +38,7 @@ object PlayerList {
             ))
 
         players.add(Player(
-            3,
+            UUID.randomUUID(),
             "Ellie",
             0,
             0,
@@ -44,7 +46,7 @@ object PlayerList {
             ))
 
         players.add(Player(
-            4,
+            UUID.randomUUID(),
             "Ronin",
             0,
             0,
@@ -62,6 +64,13 @@ object PlayerList {
         players.add(player)
     }
 
+    fun getPlayerNames(): List<String> {
+        return players.map{ it.playerName}
+    }
+
+    fun getPlayer(name: String): Player? {
+        return players.find{it.playerName == name}
+    }
 
 
 }
