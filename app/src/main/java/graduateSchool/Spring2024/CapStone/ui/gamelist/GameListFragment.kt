@@ -35,9 +35,6 @@ class GameListFragment : Fragment() {
         get() = checkNotNull(_binding){
             "cannot access"
         }
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    //private val binding get() = _binding!!
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
@@ -73,29 +70,7 @@ class GameListFragment : Fragment() {
 
         binding.gameRecyclerView.layoutManager = LinearLayoutManager(context)
 
-/*
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                sharedViewModel.games.collect { games ->
-                    println(games.size)
-
-                   // binding.gameRecyclerView.adapter =
-                    val adapter = GameListAdapter(games) { gameId ->
-                        print(games.size)
-                        findNavController().navigate(
-                            GameListFragmentDirections.showGameDetail(gameId)
-                        )
-                    }
-
-                    binding.gameRecyclerView.adapter = adapter
-                    adapter.notifyDataSetChanged()
-
-                }
-            }
-        }
-
- */
 
         gameListAdapter = GameListAdapter(emptyList()) { gameId ->
             findNavController().navigate(
@@ -103,32 +78,24 @@ class GameListFragment : Fragment() {
             )
         }
         binding.gameRecyclerView.adapter = gameListAdapter
-        sharedViewModel.games.observe(viewLifecycleOwner){games ->
+        print("Shared View model list size: ")
 
+        sharedViewModel.games.observe(viewLifecycleOwner){games ->
+            println(games.size)
+            for (game in games) {
+                print(sharedViewModel.templateList.getTemplates().find{it.templateId == game.templateId})
+                println(game.title)
+            }
+
+            if(games.size == 0 ){
+                binding.textDashboard.visibility = View.VISIBLE
+            }else{
+                binding.textDashboard.visibility = View.GONE
+            }
            gameListAdapter.updateGames(games)
+            binding.gameRecyclerView.invalidate()
         }
 
-/*
-                gameListAdapter = GameListAdapter(emptyList()) { gameId ->
-                    findNavController().navigate(GameListFragmentDirections.showGameDetail(gameId))
-                }
-                binding.gameRecyclerView.apply{
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = gameListAdapter
-                }
-                viewLifecycleOwner.lifecycleScope.launch{
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
-                        sharedViewModel.games.collect{games ->
-                            gameListAdapter.updateGames(games)
-                        }
-                    }
-                }
-
-                getItemTouchHelper().attachToRecyclerView(binding.gameRecyclerView)
-
-
-
- */
 
 
     }

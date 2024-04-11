@@ -42,7 +42,6 @@ class NewGameFragment: Fragment() {
     ): View? {
         super.onCreate(savedInstanceState)
 
-
         _binding=FragmentNewGameBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -54,6 +53,7 @@ class NewGameFragment: Fragment() {
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         availablePlayers = sharedViewModel.playerList.getPlayerNames()
 
+        binding.createNewGame.visibility = View.GONE
         var templateTitles = sharedViewModel.templateList.getTemplateNames()
         var adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, templateTitles)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -81,16 +81,24 @@ class NewGameFragment: Fragment() {
             println(selectedTemplateId)
             if (template != null) {
                 println(template.gameName)
+                updateCreateGame()
             }else{
                 println("Template is null")
+                updateCreateGame()
             }
         }
 
         binding.addButton.setOnClickListener{
             addPlayerSlot()
+            updateCreateGame()
+            print("selcted players list after adding a player: " )
+            println(selectedPlayersList)
         }
         binding.removeButton.setOnClickListener{
             removePlayerSlot()
+            updateCreateGame()
+            print("selcted players list after removing a player: " )
+            println(selectedPlayersList)
         }
 
         binding.createNewGame.setOnClickListener{
@@ -106,7 +114,7 @@ class NewGameFragment: Fragment() {
     }
 
     private val selectedPlayersList = mutableListOf<Player>()
-
+/*
     fun addPlayerSlot(){
         val playerSlot = layoutInflater.inflate(R.layout.new_player_entry, null)
 
@@ -134,14 +142,60 @@ class NewGameFragment: Fragment() {
 
     }
 
-    fun removePlayerSlot(){
-        if(binding.addPlayersLayout.childCount > 0){
 
+ */
+
+    fun addPlayerSlot() {
+        // Inflate the player entry layout
+        val playerSlot = layoutInflater.inflate(R.layout.new_player_entry, null)
+        binding.addPlayersLayout.addView(playerSlot)
+        binding.removeButton.visibility = View.VISIBLE
+
+        val playerSpinner = playerSlot.findViewById<Spinner>(R.id.new_player_spinner)
+
+        // Filter out players that are already selected
+        val availablePlayersFiltered = availablePlayers.filterNot { player ->
+            selectedPlayersList.any { it.playerName == player }
+        }
+
+        val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, availablePlayersFiltered)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        playerSpinner.adapter = adapter
+
+        playerSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedPlayer = availablePlayersFiltered[position]
+
+
+                // Remove the previously selected player if any
+                //selectedPlayersList.clear()
+                // Add the newly selected player
+                sharedViewModel.playerList.getPlayer(selectedPlayer)?.let {
+                    selectedPlayersList.add(it)
+                }
+
+                // Update button state
+                updateCreateGame()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
+    }
+
+    fun removePlayerSlot(){
+        if(selectedPlayersList.isNotEmpty()){
+            selectedPlayersList.removeAt(selectedPlayersList.size -1)
+        }
+        if(binding.addPlayersLayout.childCount > 1){
+
+            //selectedPlayersList.removeAt(binding.addPlayersLayout.childCount-1)
             binding.addPlayersLayout.removeViewAt(binding.addPlayersLayout.childCount-1)
 
+
         }else{
-           // binding.removeButton.visibility = View.GONE
-           // binding.addPlayersLayout.visibility = View.VISIBLE
+            Toast.makeText(requireContext(), "No players to remove", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -159,8 +213,10 @@ class NewGameFragment: Fragment() {
             // Create your Game object with the selected template ID
             val newGame = Game(selectedTemplateId!!, gameName,players, scores)
             val gameId = sharedViewModel.addNewGame(newGame)
+            print("selected players")
+            println(newGame.players)
+            //selectedPlayersList.clear()
 
-            selectedPlayersList.clear()
 
             val action = GameFragmentDirections.actionGameFragment(gameId)
             val message = "New Game added: $gameName"
@@ -174,53 +230,15 @@ class NewGameFragment: Fragment() {
             // Show an error message or take appropriate action
         }
 
-        /*
-        val newGame = Game(gameName, players,scores)
-
-            val gameId = sharedViewModel.addNewGame(newGame)
-
-            selectedPlayersList.clear()
-            ///findNavController().navigate(R.id.action_GameFragment)
-
-
-            //val action = GameFragmentDirections.actionGameList()
-            val action = GameFragmentDirections.actionGameFragment(gameId)
-
-            findNavController().navigate(action)
-            //findNavController().navigateUp()
-
-
-
-         */
     }
 
-/*
-
-
-    private fun updateOtherSpinners(currentSpinner: Spinner, selectedPlayer: String) {
-        for (i in 0 until binding.addPlayersLayout.childCount) {
-            val playerSlot = binding.addPlayersLayout.getChildAt(i)
-            val otherSpinner = playerSlot.findViewById<Spinner>(R.id.new_player_spinner)
-
-            if (otherSpinner != currentSpinner && otherSpinner != null) { // Exclude the current spinner
-                val adapter = otherSpinner.adapter as ArrayAdapter<String>
-
-                if (selectedPlayer.isNotEmpty()) {
-                    // If a player is selected, remove it from other spinners
-                    adapter.remove(selectedPlayer)
-                } else {
-                    // If no player is selected, add back the deselected player to other spinners
-                    val deselectedPlayer = selectedPlayersMap[otherSpinner]
-                    if (deselectedPlayer != null) {
-                        adapter.add(deselectedPlayer)
-                        adapter.sort { o1, o2 -> o1.compareTo(o2) }
-                    }
-                }
-                adapter.notifyDataSetChanged()
-            }
+    private fun updateCreateGame(){
+        if(selectedTemplateId != null && selectedPlayersList.isNotEmpty()){
+            binding.createNewGame.visibility = View.VISIBLE
+        }else{
+            binding.createNewGame.visibility = View.GONE
         }
     }
 
 
- */
 }

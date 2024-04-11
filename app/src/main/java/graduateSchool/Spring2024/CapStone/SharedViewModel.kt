@@ -139,23 +139,27 @@ class SharedViewModel: ViewModel() {
 
     fun deleteGame(game: Game){
         viewModelScope.launch {
-            gameList.deleteGame(game)
+            val currentGame = _games.value.orEmpty().toMutableList()
+            currentGame.remove(game)
+            _games.value = currentGame.toList()
+           // gameList.deleteGame(game)
         }
     }
 
     fun addNewGame(game: Game): UUID {
+            viewModelScope.launch {
+                val currentGame = _games.value.orEmpty().toMutableList()
+                currentGame.add(game)
+                _games.value = currentGame.toList()
 
-        val currentGame = _games.value.orEmpty().toMutableList()
-        currentGame.add(game)
-        _games.value = currentGame.toList()
 
+                // viewModelScope.launch {
+                //     Games.addGame(game)
+                //    gameList = Games
 
-       // viewModelScope.launch {
-       //     Games.addGame(game)
-        //    gameList = Games
-
-          //  _games.value = gameList.getGames()
-        //}
+                //  _games.value = gameList.getGames()
+                //}
+            }
          return game.gameId
 
     }

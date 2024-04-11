@@ -27,15 +27,9 @@ class GameHolder(
         }
 
 
-        // binding.listItemTitle.text = dream.title
-        // binding.listItemReflectionCount.text = dream.reflections.toString()
+
         binding.gameItemTitle.text = game.title
-        // binding.listItem.text = game.title
-        //binding.listOfPlayers.text =
-        //   binding.root.context.getString(
-        //     R.string.reflection_count,
-        //    dream.entries.count { it.kind ==  DreamEntryKind.REFLECTION}
-        // )
+
 
 
         val playerNames = game.players.map {it.playerName }
@@ -52,32 +46,7 @@ class GameHolder(
                 }
             }
         }
-        //var tempString: String = "Players: "
-        //binding.listOfPlayers.text = game.players.forEach {
-        //    tempString += " ${it.playerName}"
-        //}.toString()
 
-        /*
-
-        with(binding.listItemImage){
-            when{
-                dream.isFulfilled -> {
-                    visibility = View.VISIBLE
-                    setImageResource(R.drawable.ic_dream_fulfilled)
-                }
-                dream.isDeferred -> {
-                    visibility = View.VISIBLE
-                    setImageResource(R.drawable.ic_dream_deferred)
-                }
-                else -> {
-                    visibility = View.GONE
-                }
-
-            }
-        }
-    }
-
- */
     }
 
 
@@ -102,10 +71,7 @@ class GameListAdapter(
 
     override fun onBindViewHolder(holder: GameHolder, position: Int) {
         val game = games[position]
-        //holder.apply {
-        //  binding.listItemTitle.text = dream.title
-        // binding.listItemReflectionCount.text = "Reflections: 0"
-        //}
+
         holder.bind(game, onGameClicked)
     }
 
@@ -114,8 +80,11 @@ class GameListAdapter(
     }
 
     fun updateGames(gameList: List<Game>){
+        print("This is the updated Game list:")
+        println(gameList.size)
         games = gameList
         notifyDataSetChanged()
+
 
     }
 }
