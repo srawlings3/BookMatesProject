@@ -78,7 +78,8 @@ class GameFragment: Fragment() {
             }
 
             binding.finishedCheckbox.setOnClickListener {
-                game.updateFinished()
+                //game.updateFinished()
+                sharedViewModel.UpdateFinished(game)
             }
 
         }
@@ -157,7 +158,7 @@ class GameFragment: Fragment() {
                     // Add EditText for score
                     val scoreEditText = EditText(requireContext()).apply {
                         hint = "Score"
-                        val score = game.scores [player]?.get(rowTitles.indexOf(rowTitle))
+                        val score = game.scores [player.playerId]?.get(rowTitles.indexOf(rowTitle))
                        // game.scores[player]?.get((rowTitles.indexOf(rowTitle)))?.let { setText(it) }
                         setText(score?.toString()?: "")
                         inputType = InputType.TYPE_CLASS_NUMBER
@@ -178,7 +179,7 @@ class GameFragment: Fragment() {
                         override fun afterTextChanged(s: Editable?) {
                             val score = s.toString().toIntOrNull() ?: 0
                             //val playerId = player.playerId
-                            val playerScores = game.scores.getOrPut(player) { mutableListOf() }
+                            val playerScores = game.scores.getOrPut(player.playerId) { mutableListOf() }
                             //val scoreIndex = rowLayout.indexOfChild(row) / 2 // Assuming 2 views per row (title and score)
 
                             val scoreIndex = rowTitles.indexOf(rowTitle)

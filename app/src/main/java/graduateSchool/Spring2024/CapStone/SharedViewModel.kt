@@ -125,17 +125,17 @@ class SharedViewModel: ViewModel() {
 
 
 
-            gameList.getGames()[0].updateFinished()
-            gameList.getGames()[1].updateFinished()
-            gameList.getGames()[6].updateFinished()
-            gameList.getGames()[4].updateFinished()
+           // gameList.getGames()[0].updateFinished()
+           // gameList.getGames()[1].updateFinished()
+           // gameList.getGames()[6].updateFinished()
+           // gameList.getGames()[4].updateFinished()
 
 
             for(game in gameList.getGames()){
                 val numRows = templateList.getTemplates().find { it.templateId == game.templateId }?.rowTitles?.size
                 for(player in game.players){
                     val playerScores = MutableList(numRows ?: 0) { 0 }
-                    game.scores[player] = playerScores
+                    game.scores[player.playerId] = playerScores
                 }
             }
 
@@ -146,6 +146,82 @@ class SharedViewModel: ViewModel() {
     }
 
 
+
+    fun UpdateFinished(game: Game){
+
+        game.updateFinished()
+
+
+        for(player in game.players) {
+            print("Players and their stats:")
+            println(player.playerName)
+            println(player.stats)
+
+            println(playerList.getPlayers().find{it.playerId == player.playerId})
+        }
+
+        var winningPlayer = mutableListOf<Player>()
+        var winningScore = 0
+
+       // val gameName = templateList.getTemplates().find{it.templateId == game.templateId}?.gameName ?: "Unknown"
+        val gameName = game?.let { game ->
+            templateList.getTemplates().find { it.templateId == game.templateId }?.gameName ?: "Unknown"
+        } ?: "Unknown"
+
+
+        for(player in game.players){
+            var score = 0
+            for(i in game.scores[player.playerId]!!){
+                score+=i
+            }
+            if(score > winningScore){
+                winningScore = score
+                winningPlayer = mutableListOf<Player>(player)
+            }else if(score == winningScore){
+                winningPlayer.add(player)
+            }
+
+        }
+
+        if(game.finished) {
+            for(player in game.players){
+                if(winningPlayer.contains(player)){
+                    val winLoss = player.stats.getOrPut(gameName) { winLoss() }
+                    winLoss.wins++
+                    player.wins++
+                    player.gamesPlayed++
+                }else{
+                    val winLoss = player.stats.getOrPut(gameName) {winLoss()}
+                    winLoss.losses++
+                    player.gamesPlayed--
+                }
+            }
+        }else{
+            for(player in game.players){
+                if(winningPlayer.contains(player)){
+                    val winLoss = player.stats.getOrPut(gameName) { winLoss() }
+                    winLoss.wins--
+                    player.wins--
+                    player.gamesPlayed--
+                }else{
+                    val winLoss = player.stats.getOrPut(gameName) {winLoss()}
+                    winLoss.losses--
+                    player.gamesPlayed--
+                }
+            }
+        }
+
+
+
+        for(player in game.players) {
+            print("Players and their stats:")
+            println(player.playerName)
+            println(player.stats)
+
+            println(playerList.getPlayers().find{it.playerId == player.playerId})
+        }
+
+    }
 
     fun deleteGame(game: Game){
         viewModelScope.launch {
@@ -195,7 +271,7 @@ class SharedViewModel: ViewModel() {
             if (game == updatedGame) {
                 // Update the scores of the specific game
                 val updatedScoresMap = game.scores.toMutableMap()
-                val currentScores = updatedScoresMap[player] ?: mutableListOf()
+                val currentScores = updatedScoresMap[player.playerId] ?: mutableListOf()
                // if (currentScores.isNotEmpty()) {
                     // Append the updated scores to the existing list
                  //   currentScores.addAll(updatedScores)

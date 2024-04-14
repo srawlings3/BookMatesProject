@@ -202,7 +202,7 @@ class NewGameFragment: Fragment() {
     private fun createGame(){
         val gameName = binding.newGameTitle.text.toString()
         val players = selectedPlayersList
-        var scores: MutableMap<Player, MutableList<Int>> = mutableMapOf()
+        var scores: MutableMap<UUID, MutableList<Int>> = mutableMapOf()
 
         val numRows = sharedViewModel.templates.value?.find { it.templateId == selectedTemplateId }?.rowTitles?.size
         print("number of rows for template: ")
@@ -211,8 +211,8 @@ class NewGameFragment: Fragment() {
             //scores[i] = mutableListOf(0)
 
             val playerScores = MutableList(numRows ?: 0) { 0 }
-            scores[i] = playerScores
-            println(scores[i])
+            scores[i.playerId] = playerScores
+            println(scores[i.playerId])
         }
 
 

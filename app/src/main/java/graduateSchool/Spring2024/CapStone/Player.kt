@@ -5,14 +5,14 @@ import java.util.UUID
 data class Player(
     val playerId: UUID,
     val playerName: String,
-    val wins: Int,
-    val gamesPlayed: Int,
-    val stats: MutableMap<String, winLoss> = mutableMapOf()
+    var wins: Int,
+    var gamesPlayed: Int,
+    var stats: MutableMap<String, winLoss> = mutableMapOf()
 )
 
 data class winLoss(
-    val GamesPlayed: Int,
-    val wins: Int
+    var wins: Int =0 ,
+    var losses: Int = 0
 )
 
 
@@ -71,6 +71,7 @@ object PlayerList {
     fun getPlayer(name: String): Player? {
         return players.find{it.playerName == name}
     }
+
 
 
 }

@@ -9,12 +9,12 @@ data class Game(
     val templateId: UUID,
     var title: String,
     val players: List<Player>,
-    val scores: MutableMap<Player, MutableList<Int>> = mutableMapOf(),
+    val scores: MutableMap<UUID, MutableList<Int>> = mutableMapOf(),
     var finished: Boolean = false
 ){
-    constructor(templateID: UUID, title: String, players: List<Player>,scores: MutableMap<Player, MutableList<Int>>) : this(UUID.randomUUID(), templateID,title, players, scores)
+    constructor(templateID: UUID, title: String, players: List<Player>,scores: MutableMap<UUID, MutableList<Int>>) : this(UUID.randomUUID(), templateID,title, players, scores)
     fun updateScore(player: Player, score: MutableList<Int>){
-        scores[player] = score
+        scores[player.playerId] = score
     }
 
     fun updateFinished(){
@@ -34,13 +34,15 @@ object Games{
     private val gamesList: MutableList<Game> = mutableListOf()
 
 
-    fun createGames(template: Template, title: String,  players: List<Player>, scores: MutableMap<Player, MutableList<Int>>){
+    fun createGames(template: Template, title: String,  players: List<Player>, scores: MutableMap<UUID, MutableList<Int>>){
         val game = Game(template.templateId, title, players, scores)
         players.forEach{
                 player ->
             game.updateScore(player, mutableListOf(0))
         }
         gamesList.add(game)
+
+
     }
 
 
