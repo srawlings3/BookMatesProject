@@ -177,6 +177,71 @@ class SharedViewModel: ViewModel() {
     }
 
 
+
+    fun updateGameScores(updatedGame: Game, player: Player, updatedScores: MutableList<Int>) {
+        val currentGames = games.value ?: return
+
+        val updatedGameList = currentGames.map { game ->
+            if (game == updatedGame) {
+                // Update the scores of the specific game
+                val updatedScoresMap = game.scores.toMutableMap()
+                val currentScores = updatedScoresMap[player] ?: mutableListOf()
+               // if (currentScores.isNotEmpty()) {
+                    // Append the updated scores to the existing list
+                 //   currentScores.addAll(updatedScores)
+               // } else {
+                 //   // If no existing scores, create a new list with the updated scores
+                   // updatedScoresMap[player] = updatedScores.toMutableList()
+               // }
+                game.copy(scores = updatedScoresMap)
+            } else {
+                game
+            }
+        }
+        _games.value = updatedGameList
+    }
+
+
+    /*
+        fun updateGameScores(updatedGame: Game, player: Player, updatedScores: MutableList<Int>) {
+            val currentGames = games.value ?: return
+
+            val updatedGameList = currentGames.map { game ->
+                if (game == updatedGame) {
+                    // Update the scores of the specific player in the game
+                    val updatedScoresMap = game.scores.toMutableMap()
+                    updatedScoresMap[player] = updatedScores
+                    val updatedGame = game.copy(scores = updatedScoresMap)
+                    updatedGame
+                } else {
+                    game
+                }
+            }
+
+            _games.value = updatedGameList
+        }
+
+
+     */
+    /*
+        fun updateGameScores(updatedGame: Game, player: Player, updatedScores: MutableList<Int>) {
+            val currentGames = games.value ?: return
+
+            val scoreMap = MutableListOf<Player, MutableList<Int>>
+            val updatedGameList = currentGames.map { game ->
+                if (game == updatedGame) {
+                    // Update the scores of the specific game
+                    val upGame = game.copy(scores = updatedScores.toMutableMap())
+                    upGame
+                } else {
+                    game
+                }
+            }
+            _games.value = updatedGameList
+        }
+
+     */
+
 }
 
 

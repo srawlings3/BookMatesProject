@@ -81,11 +81,11 @@ class GameListFragment : Fragment() {
         print("Shared View model list size: ")
 
         sharedViewModel.games.observe(viewLifecycleOwner){games ->
-            println(games.size)
-            for (game in games) {
-                print(sharedViewModel.templateList.getTemplates().find{it.templateId == game.templateId})
-                println(game.title)
-            }
+           // println(games.size)
+            //for (game in games) {
+              //  print(sharedViewModel.templateList.getTemplates().find{it.templateId == game.templateId})
+                //println(game.title)
+           // }
 
             if(games.size == 0 ){
                 binding.textDashboard.visibility = View.VISIBLE

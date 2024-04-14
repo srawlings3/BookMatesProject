@@ -64,14 +64,14 @@ class GameFragment: Fragment() {
 
         val game = gameID?.let{fetchGame(gameID)}
 
-
+        if (game != null) {
+            println(game.scores)
+        }
 
         game?.let {
 
 
-            if (game != null) {
-                updateUI(game)
-            }
+            updateUI(game)
 
             binding.gameTitle.doOnTextChanged { text, _, _, _ ->
                 game.updateTitle(text.toString())
@@ -113,6 +113,7 @@ class GameFragment: Fragment() {
         val contentLayout = scrollView.getChildAt(0) as LinearLayout
         contentLayout.removeAllViews() // Clear previous content
 
+        val playerScoresMap = game.scores
         // Iterate over players to create sections
         for (player in players) {
             // Create a header for each player
@@ -121,6 +122,7 @@ class GameFragment: Fragment() {
             playerHeader.textSize = 18f
             playerHeader.setPadding(0, 16, 0, 8)
             contentLayout.addView(playerHeader)
+
 
             // Create a row for each player
             val rowLayout = LinearLayout(requireContext())
@@ -155,12 +157,16 @@ class GameFragment: Fragment() {
                     // Add EditText for score
                     val scoreEditText = EditText(requireContext()).apply {
                         hint = "Score"
+                        val score = game.scores [player]?.get(rowTitles.indexOf(rowTitle))
+                       // game.scores[player]?.get((rowTitles.indexOf(rowTitle)))?.let { setText(it) }
+                        setText(score?.toString()?: "")
                         inputType = InputType.TYPE_CLASS_NUMBER
                         layoutParams = LinearLayout.LayoutParams(
                             0,
                             LinearLayout.LayoutParams.WRAP_CONTENT,
                             1f
                         )
+
                     }
                     row.addView(scoreEditText)
 
@@ -170,16 +176,34 @@ class GameFragment: Fragment() {
                         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                         override fun afterTextChanged(s: Editable?) {
-                            // Update the game's scores MutableMap
                             val score = s.toString().toIntOrNull() ?: 0
-                            val playerId = player.playerId
+                            //val playerId = player.playerId
                             val playerScores = game.scores.getOrPut(player) { mutableListOf() }
-                            val scoreIndex = rowLayout.indexOfChild(row) / 2 // Assuming 2 views per row (title and score)
+                            //val scoreIndex = rowLayout.indexOfChild(row) / 2 // Assuming 2 views per row (title and score)
+
+                            val scoreIndex = rowTitles.indexOf(rowTitle)
+
+                            print("score: ")
+                            println(score)
+                            print("playerScores: ")
+                            println(playerScores)
+                            print("scoreIndex: ")
+                            println(scoreIndex)
+
                             if (scoreIndex < playerScores.size) {
                                 playerScores[scoreIndex] = score
                             } else {
                                 playerScores.add(scoreIndex, score)
                             }
+
+                            print("this is the score that was changed: ")
+                            print(score)
+                            print(" for ")
+                            println(player.playerName)
+                            print("player's scores: ")
+                            println(playerScores)
+                            sharedViewModel.updateGameScores(game, player, playerScores)
+                            println(game.scores)
                         }
                     })
 
@@ -191,16 +215,11 @@ class GameFragment: Fragment() {
             contentLayout.addView(rowLayout)
         }
     }
-    // Save scores to storage using SharedViewModel
-  //  private fun saveScoresToStorage() {
-    //    val scores = game.scores
-      //  sharedViewModel.saveScores(scores)
-    //}
 
-    // Retrieve scores from storage using SharedViewModel
-    //private fun retrieveScoresFromStorage() {
-      //  return sharedViewModel.getScores()
-    //}
+
+    fun saveScores(game: Game){
+
+    }
 
 }
 
