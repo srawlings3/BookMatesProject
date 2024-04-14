@@ -130,6 +130,16 @@ class SharedViewModel: ViewModel() {
             gameList.getGames()[6].updateFinished()
             gameList.getGames()[4].updateFinished()
 
+
+            for(game in gameList.getGames()){
+                val numRows = templateList.getTemplates().find { it.templateId == game.templateId }?.rowTitles?.size
+                for(player in game.players){
+                    val playerScores = MutableList(numRows ?: 0) { 0 }
+                    game.scores[player] = playerScores
+                }
+            }
+
+
             _games.value = gameList.getGames()
             _templates.value = templateList.getTemplates()
         }
