@@ -1,6 +1,8 @@
 package graduateSchool.Spring2024.CapStone.ui.gamelist
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import graduateSchool.Spring2024.CapStone.Game
 
 import graduateSchool.Spring2024.CapStone.GameHolder
 import graduateSchool.Spring2024.CapStone.GameListAdapter
@@ -92,8 +95,50 @@ class GameListFragment : Fragment() {
             }else{
                 binding.textDashboard.visibility = View.GONE
             }
-           gameListAdapter.updateGames(games)
+
+
+
+          // gameListAdapter.updateGames(games)
+            val filteredGames = filterGames(
+                binding.FilterText.text.toString(),
+                binding.FinishGameFilter.isChecked,
+
+                games
+            )
+            gameListAdapter.updateGames(filteredGames)
+
             binding.gameRecyclerView.invalidate()
+        }
+
+
+        // Set up listener for filter text changes
+        binding.FilterText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not used
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val filteredGames = filterGames(
+                    s.toString(),
+                    binding.FinishGameFilter.isChecked,
+
+                    sharedViewModel.games.value ?: emptyList()
+                )
+                gameListAdapter.updateGames(filteredGames)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Not used
+            }
+        })
+
+        binding.FinishGameFilter.setOnCheckedChangeListener { _, isChecked ->
+            val filteredGames = filterGames(
+                binding.FilterText.text.toString(),
+                isChecked,
+                sharedViewModel.games.value ?: emptyList()
+            )
+            gameListAdapter.updateGames(filteredGames)
         }
 
 
@@ -123,6 +168,20 @@ class GameListFragment : Fragment() {
             }
 
         })
+    }
+
+
+    private fun filterGames(
+        searchText: String,
+        finishedOnly: Boolean,
+        games: List<Game>
+    ): List<Game> {
+          return games.filter { game ->
+              val titleMatches = game.title.contains(searchText, ignoreCase = true)
+          val statusMatches = !finishedOnly || game.finished
+         titleMatches && statusMatches
+        }
+
     }
 
 

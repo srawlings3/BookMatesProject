@@ -91,13 +91,13 @@ class NewGameFragment: Fragment() {
         binding.addButton.setOnClickListener{
             addPlayerSlot()
             updateCreateGame()
-            print("selcted players list after adding a player: " )
+            print("selected players list after adding a player: " )
             println(selectedPlayersList)
         }
         binding.removeButton.setOnClickListener{
             removePlayerSlot()
             updateCreateGame()
-            print("selcted players list after removing a player: " )
+            print("selected players list after removing a player: " )
             println(selectedPlayersList)
         }
 
@@ -144,7 +144,7 @@ class NewGameFragment: Fragment() {
 
 
  */
-
+/*
     fun addPlayerSlot() {
         // Inflate the player entry layout
         val playerSlot = layoutInflater.inflate(R.layout.new_player_entry, null)
@@ -169,8 +169,61 @@ class NewGameFragment: Fragment() {
 
                 // Remove the previously selected player if any
                 //selectedPlayersList.clear()
+
                 // Add the newly selected player
                 sharedViewModel.playerList.getPlayer(selectedPlayer)?.let {
+                    selectedPlayersList.add(it)
+                }
+
+
+                // Update button state
+                updateCreateGame()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
+    }
+
+
+ */
+
+    private val previousSelectedPlayerNames = mutableMapOf<Spinner, String>()
+
+    fun addPlayerSlot() {
+        // Inflate the player entry layout
+        val playerSlot = layoutInflater.inflate(R.layout.new_player_entry, null)
+        binding.addPlayersLayout.addView(playerSlot)
+        binding.removeButton.visibility = View.VISIBLE
+
+        val playerSpinner = playerSlot.findViewById<Spinner>(R.id.new_player_spinner)
+
+        // Filter out players that are already selected
+        val availablePlayersFiltered = availablePlayers.filterNot { player ->
+            selectedPlayersList.any { it.playerName == player }
+        }
+
+        val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, availablePlayersFiltered)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        playerSpinner.adapter = adapter
+
+        playerSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedPlayerName = availablePlayersFiltered[position]
+
+                // Remove the previously selected player if any
+                previousSelectedPlayerNames[playerSpinner]?.let { previousSelectedPlayerName ->
+                    if (previousSelectedPlayerName != selectedPlayerName) {
+                        sharedViewModel.playerList.getPlayer(previousSelectedPlayerName)?.let {
+                            selectedPlayersList.remove(it)
+                        }
+                    }
+                }
+                previousSelectedPlayerNames[playerSpinner] = selectedPlayerName
+
+                // Add the newly selected player
+                sharedViewModel.playerList.getPlayer(selectedPlayerName)?.let {
                     selectedPlayersList.add(it)
                 }
 
@@ -183,6 +236,11 @@ class NewGameFragment: Fragment() {
             }
         }
     }
+
+
+
+
+
 
     fun removePlayerSlot(){
         if(selectedPlayersList.isNotEmpty()){
