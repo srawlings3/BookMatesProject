@@ -4,8 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< Updated upstream
     android:name="androidx.navigation.fragment.NavHostFragment"
     app:navGraph="@navigation/nav_graph">
+=======
+    app:navGraph="@navigation/mobile_navigation">
+>>>>>>> Stashed changes
 
     <TextView
         android:id="@+id/text_dashboard"
@@ -21,10 +25,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+<<<<<<< Updated upstream
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/game_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/list_item_games"/>
+=======
+>>>>>>> Stashed changes
 </androidx.constraintlayout.widget.ConstraintLayout>
